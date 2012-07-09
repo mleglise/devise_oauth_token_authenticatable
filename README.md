@@ -3,9 +3,24 @@
 Ruby gem that allows Rails 3 + Devise to authenticate users via an OAuth Access
 Token from a 3rd party provider.
 
-HERE BE DRAGONS! This gem is an extraction from another project, and I'm
-ashamed to say does not have any test coverage yet. If you have any suggestions
-for how to properly test a Devise module like this, please drop me a line.
+There are plenty of gems out there that deal with being an OAuth2 "consumer",
+where you redirect users to an OAuth2 "provider", allowing you to hand off
+authentication to a separate service. There are also plenty of gems that set
+you up as your own OAuth2 provider. ***BUT***, what happens when you want to
+separate your "authentication" server from your "resource" server?
+
+This gem is meant to be used on an API "resource" server, where you want to
+accept OAuth Access Tokens from a client, and validate them against a separate
+"authentication" server. This communication is outside the scope of the
+official [OAuth 2 spec](http://tools.ietf.org/html/draft-ietf-oauth-v2-27), but
+there is a need for it anyway.
+
+Comments and suggestions are welcome.
+
+## HERE BE DRAGONS!
+This gem is an extraction from another project, and I'm ashamed to say does not
+have any test coverage yet. If you have any suggestions for how to properly
+test a Devise module like this, please drop me a line.
 
 ## Requirements
 
@@ -31,7 +46,7 @@ Devise.setup do |config|
   # ==> Configuration for :oauth_token_authenticatable
   config.oauth_client_id             = "app-id-goes-here"
   config.oauth_client_secret         = "secret-key-goes-here"
-  config.oauth_token_validation_url  = "/oauth/verify\_credentials"
+  config.oauth_token_validation_url  = "/oauth/verify_credentials"
   config.oauth_client_options        = {
     site: "https://your.oauth.host.com",
     token_method: :get
@@ -41,12 +56,28 @@ end
 
 ### Configure User to support Access Token authentication
 
+You must define the class method `find_for_oauth_token_authentication`, which
+will be called by Devise when trying to lookup the user record. It will receive
+one string parameter, the Access Token string, as provided by the client.
+
+Your method can then call `validate_oauth_token`, which will do the heavy
+lifting of contacting your OAuth Authentication Server at the
+token_validation_url and returning an OAuth2::AccessToken object. Your method
+can then act as appropriate with the returned data, including using the object
+to make additional calls to the Authentication Server.
+
+Your method should return `nil` if the user cannot be authenticated, or an
+initialized (and persisted) User object if successful.
+
+NOTE: The docs all refer to the `User` model, but it can be whatever model you
+use with Devise.
+
 ```ruby
 class User
   devise :oauth_token_authenticatable
   
-  def self.find_for_oauth_token_authentication(conditions)
-    access_token = validate_oauth_token(conditions)
+  def self.find_for_oauth_token_authentication(token_str)
+    access_token = validate_oauth_token(token_str)
     return nil unless access_token
     User.find_or_create_by_email( access_token.params['email'] )
   end
