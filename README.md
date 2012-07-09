@@ -1,6 +1,11 @@
-# DeviseOauthTokenAuthenticatable
+# Devise OauthTokenAuthenticatable
 
-TODO: Write a gem description
+Ruby gem that allows Rails 3 + Devise to authenticate users via an OAuth Access Token from a 3rd party provider.
+
+## Requirements
+
+* Devise authentication library
+* Rails 3.1 or higher
 
 ## Installation
 
@@ -27,3 +32,8 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Credits
+
+This gem was developed by Marc Leglise.
+It borrows heavily from [devise\_oauth2\_providable](https://github.com/socialcast/devise_oauth2_providable)
