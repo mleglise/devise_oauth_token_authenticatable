@@ -1,6 +1,11 @@
 # Devise OauthTokenAuthenticatable
 
-Ruby gem that allows Rails 3 + Devise to authenticate users via an OAuth Access Token from a 3rd party provider.
+Ruby gem that allows Rails 3 + Devise to authenticate users via an OAuth Access
+Token from a 3rd party provider.
+
+HERE BE DRAGONS! This gem is an extraction from another project, and I'm
+ashamed to say does not have any test coverage yet. If you have any suggestions
+for how to properly test a Devise module like this, please drop me a line.
 
 ## Requirements
 
@@ -9,7 +14,7 @@ Ruby gem that allows Rails 3 + Devise to authenticate users via an OAuth Access 
 
 ## Installation
 
-Add this line to your application's Gemfile:
+### Add this line to your application's Gemfile:
 
     gem 'devise_oauth_token_authenticatable'
 
@@ -17,13 +22,36 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+### Configure Devise to point to your OAuth authorization server.
 
-    $ gem install devise_oauth_token_authenticatable
+```ruby
+# config/initializers/devise.rb
+require 'devise_oauth_token_authenticatable'
+Devise.setup do |config|
+  # ==> Configuration for :oauth_token_authenticatable
+  config.oauth_client_id             = "app-id-goes-here"
+  config.oauth_client_secret         = "secret-key-goes-here"
+  config.oauth_token_validation_url  = "/oauth/verify\_credentials"
+  config.oauth_client_options        = {
+    site: "https://your.oauth.host.com",
+    token_method: :get
+  }
+end
+```
 
-## Usage
+### Configure User to support Access Token authentication
 
-TODO: Write usage instructions here
+```ruby
+class User
+  devise :oauth_token_authenticatable
+  
+  def self.find_for_oauth_token_authentication(conditions)
+    access_token = validate_oauth_token(conditions)
+    return nil unless access_token
+    User.find_or_create_by_email( access_token.params['email'] )
+  end
+end
+```
 
 ## Contributing
 
