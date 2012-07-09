@@ -12,8 +12,10 @@ module Devise
     #
     # OauthTokenAuthenticatable adds the following options to devise_for:
     #
-    #   * +oauth_authentication_server+: Defines the hostname of the authentication server. E.g. https://passport.active.com
     #   * +oauth_token_validation_url+: Defines the relative URL path to validate a given Access Token. E.g. /api/getUserInfoByAccessToken
+    #   * +oauth_client_id+: Your app ID, as registered with your authentication server.
+    #   * +oauth_client_secret+: Your app secret, provided by your authentication server.
+    #   * +oauth_client_options+: A hash of options passed to the OAuth2::Client. Should include the 'site' param.
     #
     module OauthTokenAuthenticatable
       extend ActiveSupport::Concern
@@ -53,7 +55,6 @@ module Devise
         end
 
         Devise::Models.config(self,
-          :oauth_authentication_server,
           :oauth_token_validation_url,
           :oauth_client_id,
           :oauth_client_secret,

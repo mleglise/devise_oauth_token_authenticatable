@@ -13,11 +13,7 @@ module Devise
     CLIENT_ENV_REF = 'oauth2.client'
   end
 
-  # Hostname of the authentication server. E.g. https://passport.active.com
-  mattr_accessor :oauth_authentication_server
-  @@oauth_authentication_server = nil
-
-  # Relative URL path to validate a given Access Token. E.g. /api/getUserInfoByAccessToken
+  # Relative URL path to validate a given Access Token. E.g. /oauth/verify_credentials
   mattr_accessor :oauth_token_validation_url
   @@oauth_token_validation_url = nil
 
