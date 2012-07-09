@@ -37,11 +37,10 @@ And then execute:
 
     $ bundle
 
-### Configure Devise to point to your OAuth authorization server.
+### Configure Devise to point to your OAuth authorization server
 
 ```ruby
 # config/initializers/devise.rb
-require 'devise_oauth_token_authenticatable'
 Devise.setup do |config|
   # ==> Configuration for :oauth_token_authenticatable
   config.oauth_client_id             = "app-id-goes-here"
@@ -62,7 +61,8 @@ one string parameter, the Access Token string, as provided by the client.
 
 Your method can then call `validate_oauth_token`, which will do the heavy
 lifting of contacting your OAuth Authentication Server at the
-token_validation_url and returning an OAuth2::AccessToken object. Your method
+token_validation_url and returning an
+[OAuth2::AccessToken](https://github.com/intridea/oauth2) object. Your method
 can then act as appropriate with the returned data, including using the object
 to make additional calls to the Authentication Server.
 
@@ -83,6 +83,33 @@ class User
   end
 end
 ```
+
+## Practical Application
+
+So what does this give you?
+
+A client application can now make calls to your app, providing an access token
+in either of two ways.
+
+### Option 1: Query string param
+
+    http://your.app.com/api/cool_stuff?access_token=1234abc
+
+### Option 2: Header param
+
+    GET /api/cool_stuff HTTP/1.1
+    Authorization: Bearer 1234abc
+    Host: your.app.com
+
+Then, anywhere you would normally call `current_user` with Devise, it will be
+automatically interpreted and turned into a real user object. But it's not
+based on the session or cookie, it's based on the Access Token!
+
+## To Do
+
+* Add tests!
+* Remove the dependency on `rack-oauth2`
+* Better error handling
 
 ## Contributing
 
