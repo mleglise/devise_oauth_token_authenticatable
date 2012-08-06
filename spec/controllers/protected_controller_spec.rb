@@ -16,7 +16,7 @@ describe ProtectedController do
       stub_request(:get, "http://oauth-test.com/api/getUserInfoByAccessToken?access_token=invalid&client_id=this-is-a-client-id").
         to_return(:status => 200, :body => "", :headers => {})
     end
-    
+
     context 'with valid bearer token in header' do
       before do
         @request.env['HTTP_AUTHORIZATION'] = "Bearer #{@token}"
@@ -24,6 +24,7 @@ describe ProtectedController do
       end
       it { should respond_with :ok }
     end
+
     context 'with valid bearer token in query string' do
       before do
         get :index, :access_token => @token, :format => 'json'
@@ -37,6 +38,7 @@ describe ProtectedController do
       end
       it { should respond_with :unauthorized }
     end
+
     context 'with valid bearer token in header and query string' do
       before do
       end
@@ -47,5 +49,13 @@ describe ProtectedController do
         }.should raise_error
       end
     end
+
+    context 'with no token anywhere' do
+      before do
+        get :index, :format => 'json'
+      end
+      it { should respond_with :unauthorized }
+    end
+
   end
 end
