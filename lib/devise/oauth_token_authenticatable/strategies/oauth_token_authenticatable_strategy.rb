@@ -11,6 +11,7 @@ module Devise
   module Strategies
     class OauthTokenAuthenticatable < Authenticatable
 
+      # Return true or false, indicating if this strategy is applicable
       def valid?
         @req = Rack::OAuth2::Server::Resource::Bearer::Request.new(env)
         @req.oauth2?
@@ -25,6 +26,19 @@ module Devise
         elsif !halted?
           fail(:invalid_token)
         end
+      rescue ::OAuth2::Error
+        oauth_error! :invalid_token, 'invalid access token'
+      end
+
+      # This method copied in from 'devise_oauth2_providable'
+      # lib/devise/oauth2_providable/strategies/oauth2_grant_type_strategy.rb
+      # return custom error response in accordance with the oauth spec
+      # see http://tools.ietf.org/html/draft-ietf-oauth-v2-16#section-4.3
+      def oauth_error!(error_code = :invalid_request, description = nil)
+        body = {:error => error_code}
+        body[:error_description] = description if description
+        custom! [401, {'Content-Type' => 'application/json'}, [body.to_json]]
+        throw :warden
       end
 
       # Do not store OauthToken validation in session.
