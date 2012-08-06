@@ -30,4 +30,11 @@ official OAuth 2 spec, but there is a need for it anyway.
   gem.add_runtime_dependency("devise", [">= 2.1.0"])
   gem.add_runtime_dependency("oauth2", ["~> 0.6.1"])
   gem.add_runtime_dependency("rack-oauth2", [">= 0.14.0"])
+  gem.add_development_dependency('rspec-rails', ['>= 2.6.1'])
+  gem.add_development_dependency('sqlite3', ['>= 1.3.5'])
+  gem.add_development_dependency('shoulda-matchers', ['>= 1.0.0.beta3'])
+  gem.add_development_dependency('factory_girl', ['>= 2.2.0'])
+  gem.add_development_dependency('factory_girl_rspec', ['>= 0.0.1'])
+  gem.add_development_dependency('rake', ['>= 0.9.2.2'])
+  gem.add_development_dependency('webmock', ['>= 1.8.8'])
 end
