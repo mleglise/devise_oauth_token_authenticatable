@@ -13,13 +13,12 @@ module Devise
 
       # Return true or false, indicating if this strategy is applicable
       def valid?
-        @req = Rack::OAuth2::Server::Resource::Bearer::Request.new(env)
-        @req.oauth2?
+        @token = setup!
+        @token.present?
       end
 
       def authenticate!
-        @req.setup!
-        resource = mapping.to.find_for_oauth_token_authentication( @req.access_token )
+        resource = mapping.to.find_for_oauth_token_authentication( @token )
         if validate(resource)
           resource.after_oauth_token_authentication
           success! resource
@@ -48,6 +47,31 @@ module Devise
       end
 
     private
+
+      def setup!
+        tokens = [access_token_in_header, access_token_in_payload].compact
+        return case Array(tokens).size
+        when 0
+          nil
+        when 1
+          tokens.first
+        else
+          invalid_request!('Both Authorization header and payload includes access token.')
+        end
+      end
+
+      def access_token_in_header
+        @auth_header = Rack::Auth::AbstractRequest.new(env)
+        if @auth_header.provided? && @auth_header.scheme == :bearer
+          @auth_header.params
+        else
+          nil
+        end
+      end
+
+      def access_token_in_payload
+        params['access_token']
+      end
 
       # Do not use remember_me behavior with token.
       def remember_me?

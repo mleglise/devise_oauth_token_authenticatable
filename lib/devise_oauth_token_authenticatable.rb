@@ -3,7 +3,6 @@
 
 require 'devise'
 require 'oauth2'
-require 'rack/oauth2'
 require 'devise/oauth_token_authenticatable/strategies/oauth_token_authenticatable_strategy'
 require 'devise/oauth_token_authenticatable/models/oauth_token_authenticatable'
 require 'devise/oauth_token_authenticatable/version'
