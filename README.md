@@ -17,11 +17,6 @@ there is a need for it anyway.
 
 Comments and suggestions are welcome.
 
-## HERE BE DRAGONS!
-This gem is an extraction from another project, and I'm ashamed to say does not
-have any test coverage yet. If you have any suggestions for how to properly
-test a Devise module like this, please drop me a line.
-
 ## Requirements
 
 * Devise authentication library
@@ -107,8 +102,7 @@ based on the session or cookie, it's based on the Access Token!
 
 ## To Do
 
-* Add tests!
-* Remove the dependency on `rack-oauth2`
+* Add more tests!
 * Better error handling
 
 ## Contributing
